@@ -169,7 +169,7 @@ def category_overwrites(guild: discord.Guild, host: discord.Role, member: discor
     return {
         guild.default_role: discord.PermissionOverwrite(view_channel=False),
         host: discord.PermissionOverwrite(view_channel=True, send_messages=True, manage_messages=True,
-                                           manage_channels=True, create_forum_threads=True,
+                                           manage_channels=True, create_public_threads=True,
                                            send_messages_in_threads=True, attach_files=True, embed_links=True),
         member: discord.PermissionOverwrite(view_channel=True, read_message_history=True),
         guest: discord.PermissionOverwrite(view_channel=guest_can_view, read_message_history=True),
@@ -178,11 +178,11 @@ def category_overwrites(guild: discord.Guild, host: discord.Role, member: discor
 
 def channel_overwrites(guild: discord.Guild, host: discord.Role, member: discord.Role, guest: discord.Role,
                        spec: ChannelSpec, category_name: str) -> dict:
-    guest_visible = category_name == "🚀 START HERE" and spec.name == "announcements"
+    guest_visible = category_name == "🚀 START HERE" and (spec.name == "announcements" or spec.name == "get-roles")
     ow = {
         guild.default_role: discord.PermissionOverwrite(view_channel=False),
         host: discord.PermissionOverwrite(view_channel=True, send_messages=True, manage_messages=True,
-                                          create_forum_threads=True, send_messages_in_threads=True,
+                                          create_public_threads=True, send_messages_in_threads=True,
                                           attach_files=True, embed_links=True),
         member: discord.PermissionOverwrite(view_channel=True, read_message_history=True),
         guest: discord.PermissionOverwrite(view_channel=guest_visible, read_message_history=True),
@@ -191,10 +191,10 @@ def channel_overwrites(guild: discord.Guild, host: discord.Role, member: discord
         ow[member].send_messages = False
         ow[guest].send_messages = False
     elif spec.kind == "forum":
-        ow[member].create_forum_threads = True
+        ow[member].create_public_threads = True
         ow[member].send_messages_in_threads = True
         ow[member].attach_files = True
-        ow[guest].create_forum_threads = False
+        ow[guest].create_public_threads = False
         ow[guest].send_messages_in_threads = False
     else:
         ow[member].send_messages = True
