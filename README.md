@@ -1,53 +1,58 @@
 # Server Creator
 
-A Python 3.10+ Discord bot that creates the **THE REVEALS PLAYBOOK V1** community layout.
+A Python Discord bot that builds and updates the approved **The Reveals Playbook V1** community server.
 
-## Stack
+## What it creates
 
-- Python 3.10+
-- discord.py 2.x
-- asyncio
-- aiosqlite (stores the main course-server invite)
-- python-dotenv
-
-## Features in this first version
-
-- `/setupserver` creates or updates the agreed categories and channels.
-- Creates the roles `Admin/Host`, `VIP/Member`, and `Guest/Unverified` if they do not already exist.
-- Creates text, announcement, and forum channels with starter topics and forum tags.
-- Applies channel visibility and posting permissions.
-- `/setcourseinvite` saves the invite to the main course server.
-- `/postcourseinvite` posts the saved invite in `#course-modules`.
-- Setup is non-destructive: it does not delete existing channels or messages.
+- Categories and text, announcement, forum, and voice channels from the approved layout.
+- Starter channel topics and forum tags.
+- Roles: `Admin/Host`, `VIP/Member`, `Guest/Unverified`, plus selectable interest roles.
+- Channel/category visibility and posting permissions.
+- Persistent interest-role buttons in `#get-roles`.
+- Main course-server invite storage and publishing.
 
 ## Server layout
 
-- 🚀 START HERE: `#start-here`, `#announcements`, `#introductions`
-- 📚 THE REVEALS PLAYBOOK V1: `#course-modules`, `#doubts`
-- 💬 COMMUNITY: `#inner-circle-chat`, `#wins`
-- 🎬 FEEDBACK: `#clip-reviews`
-- 🧰 RESOURCES: `#assets`, `#tools-and-deals`
-- 💰 EARN: `#campaigns`, `#opportunities`
-- ⚙️ COMMUNITY MANAGEMENT: `#suggestions`
+- 🚀 START HERE: `#announcements`, `#get-roles`
+- 📚 THE REVEALS PLAYBOOK V1: `#course-modules`, `#doubts`, `#learning-resources`, `#homework-and-tasks`
+- 💬 COMMUNITY: `#inner-circle-chat`, `#wins`, `#daily-accountability`
+- 🎬 FEEDBACK: `#clip-reviews`, `#content-ideas`, `#feedback-discussion`
+- 🧰 RESOURCES: `#assets`, `#tools-and-deals`, `#ai-resources`
+- 💰 EARN: `#campaigns`, `#opportunities`, `#success-stories`
+- ⚙️ COMMUNITY MANAGEMENT: `#suggestions`, `#support`, `#report-an-issue`
+- 🔊 VOICE ROOMS: `Community Lounge`, `Study Room`
 
-`#wins` and `#course-modules` are text channels. Lessons remain in the separate main course server.
+Removed as requested: `#welcome`, `#rules`, `#start-here`, and `#introductions`.
 
-## Discord Developer Portal
+## Commands
 
-1. Create an application and add a Bot user.
-2. Copy the bot token. Never share it in chat or commit it to GitHub.
-3. In OAuth2 URL Generator, select scopes `bot` and `applications.commands`.
-4. Grant the bot these permissions: Manage Channels, Manage Roles, View Channels, Send Messages, Send Messages in Threads, Read Message History, Embed Links, Attach Files.
-5. Invite the bot to your community server.
-6. In Server Settings → Roles, move the bot's role above the roles it needs to manage.
+- `/setupserver` — create or update the server layout. It does not delete existing channels or messages.
+- `/setcourseinvite` — save the main course-server invite.
+- `/postcourseinvite` — post the saved invite in `#course-modules`.
+- `/postrolepicker` — repost the interest-role buttons in `#get-roles`.
 
-No privileged Gateway intents are required for this first version.
+## Requirements
 
-## Run on Termux
+- Python 3.10+
+- discord.py 2.x
+- aiosqlite
+- python-dotenv
+
+## Discord setup
+
+1. Create an application and Bot user in the Discord Developer Portal.
+2. Copy the bot token privately. Never paste it into chat or commit it to GitHub.
+3. Invite the bot with the `bot` and `applications.commands` OAuth scopes.
+4. Grant: Manage Channels, Manage Roles, View Channels, Send Messages, Send Messages in Threads, Read Message History, Embed Links, Attach Files, and Connect/Speak if voice management requires them.
+5. Move the bot's role above the roles it needs to manage.
+
+No privileged Gateway intents are required.
+
+## Run in Termux
 
 ```bash
 pkg update
-pkg install python
+pkg install python git
 git clone https://github.com/farestas0e-stack/Server-creator-.git
 cd Server-creator-
 python -m pip install -r requirements.txt
@@ -56,16 +61,20 @@ nano .env
 python main.py
 ```
 
-Paste your bot token into `.env` as the value of `DISCORD_TOKEN`.
+Put your token in `.env` as `DISCORD_TOKEN=your_token_here`. Keep `.env` private.
 
-## First run
+## First setup
 
-1. Start the bot with `python main.py`.
-2. In your target Discord server, run `/setupserver` as an administrator.
-3. Run `/setcourseinvite` with the invite link to your main course server.
-4. Run `/postcourseinvite` to publish the link in `#course-modules`.
-5. Assign members to `VIP/Member` and new/unverified users to `Guest/Unverified`. Assign trusted staff to `Admin/Host`.
+1. Start the bot.
+2. Run `/setupserver` in the target server as an administrator.
+3. Run `/setcourseinvite` with the main course-server invite.
+4. Run `/postcourseinvite` to publish it.
+5. Assign members to `VIP/Member` and unverified users to `Guest/Unverified`. The role picker lets members toggle interest roles.
 
-## Important permission note
+## Important notes
 
-The bot creates the role names but does not automatically assign them to users. The `Admin/Host` role receives moderation and server-management permissions but not the full Administrator permission. Review role permissions and channel visibility before opening the server to members.
+- The bot creates roles but does not automatically assign the membership roles.
+- Interest-role buttons are persistent across bot restarts.
+- Existing channels with an unexpected type are reported as skipped rather than deleted or replaced.
+- Re-running setup updates matching channels and permissions. Review the result before opening the server.
+- `#report-an-issue` is a server-visible text channel, not a private ticket system.
